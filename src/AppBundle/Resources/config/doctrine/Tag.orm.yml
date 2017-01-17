@@ -18,6 +18,7 @@ AppBundle\Entity\Tag:
         dateUpdate:
             type: datetime
             column: date_update
+    manyToMany:
         images:
             targetEntity: AppBundle\Entity\Image
             mappedBy: tags

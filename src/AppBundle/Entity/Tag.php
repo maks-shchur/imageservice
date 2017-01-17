@@ -32,10 +32,17 @@ class Tag
     private $dateUpdate;
 
     /**
-     * @var string
+     * @var \Doctrine\Common\Collections\Collection
      */
     private $images;
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->images = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
     /**
      * Get id
@@ -120,23 +127,33 @@ class Tag
     }
 
     /**
-     * Set images
+     * Add image
      *
-     * @param string $images
+     * @param \AppBundle\Entity\Image $image
      *
      * @return Tag
      */
-    public function setImages($images)
+    public function addImage(\AppBundle\Entity\Image $image)
     {
-        $this->images = $images;
+        $this->images[] = $image;
 
         return $this;
     }
 
     /**
+     * Remove image
+     *
+     * @param \AppBundle\Entity\Image $image
+     */
+    public function removeImage(\AppBundle\Entity\Image $image)
+    {
+        $this->images->removeElement($image);
+    }
+
+    /**
      * Get images
      *
-     * @return string
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getImages()
     {
