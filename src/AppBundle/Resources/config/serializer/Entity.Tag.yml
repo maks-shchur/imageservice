@@ -1,0 +1,17 @@
+AppBundle\Entity\Tag:
+    exclusion_policy: ALL
+    properties:
+        id:
+            expose: true
+            groups: [short, full]
+        tag:
+            expose: true
+            groups: [short, full]
+        dateCreate:
+            expose: true
+            groups: [full]
+            serialized_name: dateCreate
+        dateUpdate:
+            expose: true
+            groups: [full]
+            serialized_name: dateUpdate
