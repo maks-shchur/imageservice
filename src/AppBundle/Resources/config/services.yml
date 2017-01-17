@@ -3,3 +3,8 @@ services:
         class: Doctrine\ORM\EntityManager
         factory: ["@doctrine", getManager]
         public: false
+
+    app.files:
+        class: AppBundle\Services\Files
+        arguments:
+            - "%kernel.root_dir%"
