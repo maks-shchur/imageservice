@@ -1,0 +1,42 @@
+fos_rest:
+    param_fetcher_listener: true
+    body_listener: true
+    format_listener:
+        rules:
+            - { path: ^/, priorities: [ json, html, xml ], fallback_format: ~, prefer_extension: true }
+
+    body_converter:
+        enabled: true
+        validate: true
+
+    body_listener:
+        array_normalizer: fos_rest.normalizer.camel_keys
+
+    view:
+        view_response_listener: 'force'
+        formats:
+            xml:  true
+            json: true
+        templating_formats:
+            html: true
+
+    exception:
+        enabled: true
+        codes:
+            'Symfony\Component\Routing\Exception\ResourceNotFoundException': 404
+            'Doctrine\ORM\OptimisticLockException': HTTP_CONFLICT
+        messages:
+            'Symfony\Component\Routing\Exception\ResourceNotFoundException': true
+            'Symfony\Component\HttpKernel\Exception\HttpException': true
+
+    allowed_methods_listener: true
+    access_denied_listener:
+        json: true
+
+    disable_csrf_role: ROLE_USER
+
+    routing_loader:
+        include_format: false
+
+nelmio_api_doc:
+    name: API Documentation
