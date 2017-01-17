@@ -2,9 +2,15 @@ services:
     app.entity_manager:
         class: Doctrine\ORM\EntityManager
         factory: ["@doctrine", getManager]
-        public: false
+        public: true
 
     app.files:
         class: AppBundle\Services\Files
         arguments:
             - "%kernel.root_dir%"
+            
+    app.image.manager:
+        class: AppBundle\Entity\EntityManager\ImageManager
+        arguments:
+            - "@app.entity_manager"
+            
