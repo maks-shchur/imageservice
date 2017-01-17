@@ -3,16 +3,14 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\EntityTrait\DateTimeControlTrait;
-use \Doctrine\Common\Collections\Collection;
-use \Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Image
+ * Tag
  */
-class Image
+class Tag
 {
     use DateTimeControlTrait;
-
+    
     /**
      * @var integer
      */
@@ -21,7 +19,7 @@ class Image
     /**
      * @var string
      */
-    private $link;
+    private $tag;
 
     /**
      * @var \DateTime
@@ -34,17 +32,9 @@ class Image
     private $dateUpdate;
 
     /**
-     * @var Collection
+     * @var string
      */
-    private $tags;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->tags = new ArrayCollection();
-    }
+    private $images;
 
 
     /**
@@ -58,27 +48,27 @@ class Image
     }
 
     /**
-     * Set link
+     * Set tag
      *
-     * @param string $link
+     * @param string $tag
      *
-     * @return Image
+     * @return Tag
      */
-    public function setLink($link)
+    public function setTag($tag)
     {
-        $this->link = $link;
+        $this->tag = $tag;
 
         return $this;
     }
 
     /**
-     * Get link
+     * Get tag
      *
      * @return string
      */
-    public function getLink()
+    public function getTag()
     {
-        return $this->link;
+        return $this->tag;
     }
 
     /**
@@ -86,7 +76,7 @@ class Image
      *
      * @param \DateTime $dateCreate
      *
-     * @return Image
+     * @return Tag
      */
     public function setDateCreate($dateCreate)
     {
@@ -110,7 +100,7 @@ class Image
      *
      * @param \DateTime $dateUpdate
      *
-     * @return Image
+     * @return Tag
      */
     public function setDateUpdate($dateUpdate)
     {
@@ -130,36 +120,26 @@ class Image
     }
 
     /**
-     * Add tag
+     * Set images
      *
-     * @param \AppBundle\Entity\Tag $tag
+     * @param string $images
      *
-     * @return Image
+     * @return Tag
      */
-    public function addTag(\AppBundle\Entity\Tag $tag)
+    public function setImages($images)
     {
-        $this->tags[] = $tag;
+        $this->images = $images;
 
         return $this;
     }
 
     /**
-     * Remove tag
+     * Get images
      *
-     * @param \AppBundle\Entity\Tag $tag
+     * @return string
      */
-    public function removeTag(\AppBundle\Entity\Tag $tag)
+    public function getImages()
     {
-        $this->tags->removeElement($tag);
-    }
-
-    /**
-     * Get tags
-     *
-     * @return Collection
-     */
-    public function getTags()
-    {
-        return $this->tags;
+        return $this->images;
     }
 }

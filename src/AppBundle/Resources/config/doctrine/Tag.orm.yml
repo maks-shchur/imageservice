@@ -1,0 +1,27 @@
+AppBundle\Entity\Tag:
+    type:  entity
+    table: tag
+    repositoryClass: AppBundle\Entity\Repository\TagRepository
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        tag:
+            type: string
+            length: 50
+            column: tag
+        dateCreate:
+            type: datetime
+            column: date_create
+        dateUpdate:
+            type: datetime
+            column: date_update
+        images:
+            targetEntity: AppBundle\Entity\Image
+            mappedBy: tags
+
+    lifecycleCallbacks:
+        prePersist: [setDateCreateValue, setDateUpdateValue]
+        preUpdate: [setDateUpdateValue]
