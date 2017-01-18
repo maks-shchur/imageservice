@@ -1,6 +1,7 @@
 <?php
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Repository\ImageRepository;
 use AppBundle\Services\Files;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -74,7 +75,7 @@ class ImageRestController extends FOSRestController
             $tags = explode(' ', $params['tags']);
             /** @var ImageManager $imageManager */
             $imageManager = $this->get("app.image.manager");
-            $image = $imageManager->setTags($image, $tags);
+            $image = $imageManager->addTags($image, $tags);
         }
 
         $entityManager->persist($image);
@@ -82,7 +83,60 @@ class ImageRestController extends FOSRestController
 
         return $serializer->toArray(
             $image,
-            SerializationContext::create()->setGroups(array('short'))
+            SerializationContext::create()->setGroups(array('full'))
         );
+    }
+
+    /**
+     * Delete image
+     *
+     * ## Response OK ##
+     *     true
+     *
+     * ### Response FAIL image not found ###
+     *
+     *     {
+     *          "code": 404,
+     *          "message": "Image not found"
+     *     }
+     *
+     * @ApiDoc(
+     *   section = "Image",
+     *   resource = true,
+     *   description = "Delete image",
+     *   parameters={
+     *       {"name"="id", "dataType"="integer", "required"=true, "description"="Image ID"}
+     *   },
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Image not found"
+     *   }
+     * )
+     *
+     * @Rest\Delete("/images")
+     *
+     * @param Request $request
+     * @return boolean
+     */
+    public function deleteImagesAction(Request $request)
+    {
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->get("app.entity_manager");
+        /** @var ImageRepository $imageRepository */
+        $imageRepository = $entityManager->getRepository('AppBundle:Image');
+        $params = $request->request->all();
+
+        /** @var Image $image */
+        $image = $imageRepository->find($params['id']);
+        if (!$image) {
+            throw new HttpException(404, "Image not found");
+        }
+
+        /** @var ImageManager $imageManager */
+        $imageManager = $this->get("app.image.manager");
+        $imageManager->delete($image);
+        $entityManager->flush();
+
+        return true;
     }
 }

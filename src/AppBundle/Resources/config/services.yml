@@ -8,9 +8,9 @@ services:
         class: AppBundle\Services\Files
         arguments:
             - "%kernel.root_dir%"
-            
+
     app.image.manager:
         class: AppBundle\Entity\EntityManager\ImageManager
         arguments:
             - "@app.entity_manager"
-            
+            - "%kernel.root_dir%"
