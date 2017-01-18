@@ -9,7 +9,7 @@ AppBundle\Entity\Image:
             groups: [short, full]
         tags:
             expose: true
-            groups: [full]
+            groups: [short, full]
             type: AppBundle\Entity\Tag
         dateCreate:
             expose: true
