@@ -281,4 +281,138 @@ class ImageRestController extends FOSRestController
             SerializationContext::create()->setGroups(array('short'))
         );
     }
+
+    /**
+     * Get list image
+     *
+     * ## Response OK ##
+     *     (array)[
+     *          (dictionary){
+     *              "id": (int)"",
+     *              "link": (string)"",
+     *              "tags": (array)[
+     *                  (dictionary){
+     *                      "id": (int)"",
+     *                      "tag": (string)""
+     *                  },
+     *                  ...
+     *              ]
+     *          },
+     *          ...
+     *      ]
+     *
+     * ### Response FAIL page pagination not found ###
+     *
+     *     {
+     *          "code": 404,
+     *          "message": "Page pagination not found"
+     *     }
+     *
+     * @ApiDoc(
+     *   section = "Image",
+     *   resource = true,
+     *   description = "Delete tags for image",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Page pagination not found"
+     *   },
+     *   requirements={
+     *      {"name"="page", "dataType"="integer", "description"="Page"},
+     *      {"name"="maxItems", "dataType"="integer", "description"="Max items"},
+     *   }
+     * )
+     *
+     * @Rest\Get("/images/{page}/{maxItems}")
+     *
+     * @param $page
+     * @param $maxItems
+     * @return array
+     */
+    public function getImagesListAction($page, $maxItems)
+    {
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->get("app.entity_manager");
+        /** @var Serializer $serializer */
+        $serializer = $this->get('jms_serializer');
+        /** @var ImageRepository $imageRepository */
+        $imageRepository = $entityManager->getRepository('AppBundle:Image');
+
+        $imageListPagination = $imageRepository->findAllByPagination($page, $maxItems);
+        if ($imageListPagination['currentPage'] > $imageListPagination['pagesCount']) {
+            throw new HttpException(404, "Page pagination not found");
+        }
+
+        $imageListPagination['results'] = $serializer->toArray(
+            $imageListPagination['results'],
+            SerializationContext::create()->setGroups(array('short'))
+        );
+
+        return $imageListPagination;
+    }
+
+    /**
+     * Search image by tags
+     *
+     * ## Response OK ##
+     *     (array)[
+     *          (dictionary){
+     *              "id": (int)"",
+     *              "link": (string)"",
+     *              "tags": (array)[
+     *                  (dictionary){
+     *                      "id": (int)"",
+     *                      "tag": (string)""
+     *                  },
+     *                  ...
+     *              ]
+     *          },
+     *          ...
+     *      ]
+     *
+     * ### Response FAIL page pagination not found ###
+     *
+     *     {
+     *          "code": 404,
+     *          "message": "Page pagination not found"
+     *     }
+     *
+     * @ApiDoc(
+     *   section = "Image",
+     *   resource = true,
+     *   description = "Search image by tags",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Page pagination not found"
+     *   },
+     *   parameters={
+     *       {"name"="tags", "dataType"="string", "required"=false, "description"="Tags list"}
+     *   },
+     * )
+     *
+     * @Rest\Post("/images/search")
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function postSearchByTagAction(Request $request)
+    {
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->get("app.entity_manager");
+        /** @var Serializer $serializer */
+        $serializer = $this->get('jms_serializer');
+        /** @var ImageRepository $imageRepository */
+        $imageRepository = $entityManager->getRepository('AppBundle:Image');
+
+        $params = $request->request->all();
+
+        $tags = [];
+        if (isset($params['tags']) and $params['tags']) {
+            $tags = explode(' ', $params['tags']);
+        }
+
+        return $serializer->toArray(
+            $imageRepository->findAllByTags($tags),
+            SerializationContext::create()->setGroups(array('short'))
+        );
+    }
 }
