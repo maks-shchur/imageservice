@@ -52,6 +52,27 @@ class ImageManager
 
     /**
      * @param Image $image
+     * @param $tags
+     * @return Image
+     */
+    public function deleteTags(Image $image, $tags)
+    {
+        /** @var TagRepository $tagRepository */
+        $tagRepository = $this->objectManager->getRepository('AppBundle:Tag');
+
+        foreach ($tags as $tag) {
+            /** @var Tag $searchTag */
+            $searchTag = $tagRepository->findOneBy(['tag' => $tag]);
+            if ($searchTag) {
+                $image->removeTag($searchTag);
+            }
+        }
+
+        return $image;
+    }
+
+    /**
+     * @param Image $image
      */
     public function delete(Image $image)
     {

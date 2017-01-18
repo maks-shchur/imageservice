@@ -144,7 +144,17 @@ class ImageRestController extends FOSRestController
      * Add tags for image
      *
      * ## Response OK ##
-     *     true
+     *     {
+     *          "id": (int)"",
+     *          "link": (string)"",
+     *          "tags": (array)[
+     *              (dictionary){
+     *                  "id": (int)"",
+     *                  "tag": (string)""
+     *              },
+     *              ...
+     *          ]
+     *     }
      *
      * ### Response FAIL image not found ###
      *
@@ -192,6 +202,77 @@ class ImageRestController extends FOSRestController
 
         $tags = explode(' ', $params['tags']);
         $image = $imageManager->addTags($image, $tags);
+        $entityManager->persist($image);
+        $entityManager->flush();
+
+        return $serializer->toArray(
+            $image,
+            SerializationContext::create()->setGroups(array('short'))
+        );
+    }
+
+    /**
+     * Delete tags for image
+     *
+     * ## Response OK ##
+     *     {
+     *          "id": (int)"",
+     *          "link": (string)"",
+     *          "tags": (array)[
+     *              (dictionary){
+     *                  "id": (int)"",
+     *                  "tag": (string)""
+     *              },
+     *              ...
+     *          ]
+     *     }
+     *
+     * ### Response FAIL image not found ###
+     *
+     *     {
+     *          "code": 404,
+     *          "message": "Image not found"
+     *     }
+     *
+     * @ApiDoc(
+     *   section = "Image",
+     *   resource = true,
+     *   description = "Delete tags for image",
+     *   parameters={
+     *       {"name"="id", "dataType"="integer", "required"=true, "description"="Image ID"},
+     *       {"name"="tags", "dataType"="string", "required"=true, "description"="Tags list"}
+     *   },
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *     404 = "Image not found"
+     *   }
+     * )
+     *
+     * @Rest\Put("/images/delete-tags")
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function putImagesDeleteTagsAction(Request $request)
+    {
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->get("app.entity_manager");
+        /** @var Serializer $serializer */
+        $serializer = $this->get('jms_serializer');
+        /** @var ImageRepository $imageRepository */
+        $imageRepository = $entityManager->getRepository('AppBundle:Image');
+        /** @var ImageManager $imageManager */
+        $imageManager = $this->get("app.image.manager");
+        $params = $request->request->all();
+
+        /** @var Image $image */
+        $image = $imageRepository->find($params['id']);
+        if (!$image) {
+            throw new HttpException(404, "Image not found");
+        }
+
+        $tags = explode(' ', $params['tags']);
+        $image = $imageManager->deleteTags($image, $tags);
         $entityManager->persist($image);
         $entityManager->flush();
 
